@@ -956,7 +956,128 @@ renderizar = function(){
 
 };analisarMotor();
 
-</script>
+function criarImportador(){
+
+ const card=document.createElement("div");
+ card.className="card";
+
+ card.innerHTML=`
+ <div class="titulo">📥 Importar histórico</div>
+
+ <p class="aviso">
+ Cole os dados no formato:<br>
+ <b>data;horário;resultado</b><br><br>
+ Exemplo:<br>
+ 05/10/2026;11:00;4711-3
+ </p>
+
+ <textarea id="dadosImportacao"
+ rows="7"
+ style="width:100%;padding:12px;border:1px solid #d5ddd8;border-radius:12px;font-size:14px"
+ placeholder="05/10/2026;11:00;4711-3"></textarea>
+
+ <button class="btn-principal"
+ onclick="importarHistorico()">
+ 📥 IMPORTAR DADOS
+ </button>
+
+ <p id="statusImportacao" class="aviso"></p>
+ `;
+
+ const app=document.querySelector(".container");
+
+ const motor=document.getElementById("motorAnalise");
+
+ if(motor){
+  app.insertBefore(card,motor);
+ }else{
+  app.appendChild(card);
+ }
+}
+
+
+function importarHistorico(){
+
+ const campo=document.getElementById("dadosImportacao");
+
+ const status=document.getElementById("statusImportacao");
+
+ const texto=campo.value.trim();
+
+ if(!texto){
+  status.textContent="Cole os dados antes de importar.";
+  return;
+ }
+
+ const linhas=texto.split(/\r?\n/);
+
+ let adicionados=0;
+ let ignorados=0;
+
+ linhas.forEach(linha=>{
+
+  const partes=linha.split(";").map(x=>x.trim());
+
+  if(partes.length<3){
+   ignorados++;
+   return;
+  }
+
+  const data=partes[0];
+  const horario=partes[1];
+  const resultado=partes.slice(2).join(";");
+
+  if(!/^\d{2}\/\d{2}\/\d{4}$/.test(data)){
+   ignorados++;
+   return;
+  }
+
+  if(!/^\d{2}:\d{2}$/.test(horario)){
+   ignorados++;
+   return;
+  }
+
+  const p=data.split("/");
+
+  const dataISO=p[2]+"-"+p[1]+"-"+p[0];
+
+  const duplicado=dados.some(x=>
+   x.data===dataISO &&
+   x.horario===horario &&
+   x.resultado===resultado
+  );
+
+  if(!duplicado){
+
+   dados.unshift({
+    data:dataISO,
+    horario:horario,
+    resultado:resultado
+   });
+
+   adicionados++;
+
+  }else{
+
+   ignorados++;
+
+  }
+
+ });
+
+ localStorage.setItem(CHAVE,JSON.stringify(dados));
+
+ renderizar();
+
+ status.textContent=
+  adicionados+" registro(s) importado(s). "+
+  ignorados+" linha(s) ignorada(s) ou duplicada(s).";
+
+ campo.value="";
+}
+
+
+criarImportador();</script>
 
 </body>
 </html>
