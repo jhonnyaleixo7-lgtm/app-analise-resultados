@@ -755,7 +755,198 @@ renderizar();function analisarMotor(){
 
 }
 
-const renderizarOriginal = renderizar;
+function analisarMotor(){
+
+ const lista = ultimos30();
+
+ const contagem = {};
+ const ultima = {};
+ const horarios = {};
+
+ lista.forEach(item=>{
+
+   const valor = String(item.resultado || "");
+
+   contagem[valor] =
+     (contagem[valor] || 0) + 1;
+
+   const data =
+     new Date(item.data+"T00:00:00");
+
+   if(!ultima[valor] || data > ultima[valor]){
+     ultima[valor] = data;
+   }
+
+   horarios[item.horario] =
+     (horarios[item.horario] || 0) + 1;
+
+ });
+
+ const total = lista.length;
+
+ const frequentes =
+   Object.entries(contagem)
+   .sort((a,b)=>b[1]-a[1])
+   .slice(0,5);
+
+ const atrasados =
+   Object.entries(ultima)
+   .map(([valor,data])=>{
+
+     const dias =
+       Math.max(
+         0,
+         Math.floor(
+           (new Date()-data)/86400000
+         )
+       );
+
+     return {valor,dias};
+
+   })
+   .sort((a,b)=>b.dias-a.dias)
+   .slice(0,5);
+
+ const rankingHorarios =
+   Object.entries(horarios)
+   .sort((a,b)=>b[1]-a[1]);
+
+ let card =
+   document.getElementById("motorAnalise");
+
+ if(!card){
+
+   card = document.createElement("div");
+
+   card.id = "motorAnalise";
+   card.className = "card";
+
+   const app =
+     document.querySelector(".container");
+
+   const limpar =
+     document.querySelector(".secundario");
+
+   const cardLimpar =
+     limpar ? limpar.closest(".card") : null;
+
+   if(cardLimpar){
+     app.insertBefore(card,cardLimpar);
+   }else{
+     app.appendChild(card);
+   }
+
+ }
+
+ const porcentagem = qtd =>
+   total
+   ? ((qtd/total)*100).toFixed(1)
+   : "0.0";
+
+ const frequentesHTML =
+   frequentes.length
+   ? frequentes.map((item,i)=>`
+
+     <div class="frequencia">
+
+       <span>
+         ${i+1}º — ${escapar(item[0])}
+       </span>
+
+       <strong>
+         ${item[1]} (${porcentagem(item[1])}%)
+       </strong>
+
+     </div>
+
+   `).join("")
+   : "<p class='aviso'>Ainda não existem dados suficientes.</p>";
+
+ const atrasadosHTML =
+   atrasados.length
+   ? atrasados.map((item,i)=>`
+
+     <div class="frequencia">
+
+       <span>
+         ${i+1}º — ${escapar(item.valor)}
+       </span>
+
+       <strong>
+         ${item.dias} dia(s)
+       </strong>
+
+     </div>
+
+   `).join("")
+   : "<p class='aviso'>Ainda não existem dados suficientes.</p>";
+
+ const horariosHTML =
+   rankingHorarios.length
+   ? rankingHorarios.map(item=>`
+
+     <div class="frequencia">
+
+       <span>🕐 ${escapar(item[0])}</span>
+
+       <strong>
+         ${item[1]} (${porcentagem(item[1])}%)
+       </strong>
+
+     </div>
+
+   `).join("")
+   : "<p class='aviso'>Nenhum horário registrado.</p>";
+
+ card.innerHTML = `
+
+   <div class="titulo">
+     🧠 Motor de análise
+   </div>
+
+   <p class="aviso">
+     Análise estatística dos últimos 30 dias.
+   </p>
+
+   <div class="titulo" style="font-size:15px;margin-top:15px">
+     📊 Resumo
+   </div>
+
+   <div class="frequencia">
+     <span>Registros analisados</span>
+     <strong>${total}</strong>
+   </div>
+
+   <div class="frequencia">
+     <span>Valores diferentes</span>
+     <strong>${Object.keys(contagem).length}</strong>
+   </div>
+
+   <div class="titulo" style="font-size:15px;margin-top:18px">
+     🔥 Mais frequentes
+   </div>
+
+   ${frequentesHTML}
+
+   <div class="titulo" style="font-size:15px;margin-top:18px">
+     ❄️ Há mais tempo sem aparecer
+   </div>
+
+   ${atrasadosHTML}
+
+   <div class="titulo" style="font-size:15px;margin-top:18px">
+     🕐 Análise por horário
+   </div>
+
+   ${horariosHTML}
+
+   <p class="aviso" style="margin-top:15px">
+     Os indicadores são estatísticos e descritivos e não garantem resultados futuros.
+   </p>
+
+ `;
+
+}const renderizarOriginal = renderizar;
 
 renderizar = function(){
 
