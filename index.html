@@ -650,7 +650,120 @@ new Date()
 .slice(0,10);
 
 
-renderizar();
+renderizar();function analisarMotor(){
+
+ const lista = ultimos30();
+
+ const contagem = {};
+
+ lista.forEach(item=>{
+   const valor = String(item.resultado || "");
+   contagem[valor] = (contagem[valor] || 0) + 1;
+ });
+
+ const ranking = Object.entries(contagem)
+   .sort((a,b)=>b[1]-a[1])
+   .slice(0,5);
+
+ const horarios = {};
+
+ lista.forEach(item=>{
+   horarios[item.horario] = (horarios[item.horario] || 0) + 1;
+ });
+
+ const rankingHorarios = Object.entries(horarios)
+   .sort((a,b)=>b[1]-a[1]);
+
+ let card = document.getElementById("motorAnalise");
+
+ if(!card){
+
+   card = document.createElement("div");
+
+   card.id = "motorAnalise";
+   card.className = "card";
+
+   const app = document.querySelector(".container");
+
+   const limpar = document.querySelector(".secundario");
+
+   const cardLimpar = limpar
+     ? limpar.closest(".card")
+     : null;
+
+   if(cardLimpar){
+     app.insertBefore(card, cardLimpar);
+   }else{
+     app.appendChild(card);
+   }
+ }
+
+ let rankingHTML = "";
+
+ if(ranking.length){
+
+   rankingHTML = ranking.map((item,index)=>`
+     <div class="frequencia">
+       <span>${index+1}º — ${escapar(item[0])}</span>
+       <strong>${item[1]} registro(s)</strong>
+     </div>
+   `).join("");
+
+ }else{
+
+   rankingHTML =
+     "<p class='aviso'>Ainda não existem dados suficientes.</p>";
+
+ }
+
+ let horariosHTML = "";
+
+ if(rankingHorarios.length){
+
+   horariosHTML = rankingHorarios.map(item=>`
+     <div class="frequencia">
+       <span>🕐 ${escapar(item[0])}</span>
+       <strong>${item[1]} registro(s)</strong>
+     </div>
+   `).join("");
+
+ }
+
+ card.innerHTML = `
+   <div class="titulo">🧠 Motor de análise</div>
+
+   <p class="aviso">
+     Análise estatística dos resultados registrados nos últimos 30 dias.
+   </p>
+
+   <div class="titulo" style="font-size:15px;margin-top:15px">
+     🏆 Valores mais frequentes
+   </div>
+
+   ${rankingHTML}
+
+   <div class="titulo" style="font-size:15px;margin-top:18px">
+     🕐 Registros por horário
+   </div>
+
+   ${horariosHTML || "<p class='aviso'>Nenhum horário registrado.</p>"}
+
+   <p class="aviso" style="margin-top:15px">
+     Esta análise é descritiva e não representa previsão ou garantia de resultados futuros.
+   </p>
+ `;
+
+}
+
+const renderizarOriginal = renderizar;
+
+renderizar = function(){
+
+ renderizarOriginal();
+
+ analisarMotor();
+
+};
 
 </script>
 
