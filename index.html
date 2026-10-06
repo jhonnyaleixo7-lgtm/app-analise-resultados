@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise de Resultados</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f3f7f5;
+ color:#17231c;
+}
+
+.tela-inicial{
+ min-height:100vh;
+ background:linear-gradient(160deg,#08783d,#19a85c);
+ color:white;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ padding:30px;
+ text-align:center;
+}
+
+.logo{
+ width:82px;
+ height:82px;
+ border-radius:24px;
+ background:white;
+ color:#12864a;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:38px;
+ font-weight:bold;
+ margin-bottom:20px;
+}
+
+.tela-inicial h1{
+ font-size:29px;
+ margin:5px 0;
+}
+
+.tela-inicial p{
+ opacity:.9;
+ margin-bottom:30px;
+}
+
+.btn{
+ width:100%;
+ max-width:420px;
+ padding:15px;
+ border:0;
+ border-radius:14px;
+ font-size:16px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.btn-verde{
+ background:#12864a;
+ color:white;
+}
+
+.btn-branco{
+ background:white;
+ color:#12864a;
+}
+
+.oculto{display:none}
+
+.topo{
+ background:#12864a;
+ color:white;
+ padding:20px;
+ border-radius:0 0 25px 25px;
+}
+
+.topo h1{
+ margin:0;
+ font-size:23px;
+}
+
+.topo p{
+ margin:6px 0 0;
+ opacity:.9;
+}
+
+.container{
+ max-width:720px;
+ margin:auto;
+ padding:15px;
+}
+
+.card{
+ background:white;
+ border-radius:18px;
+ padding:18px;
+ margin-bottom:14px;
+ box-shadow:0 3px 14px rgba(0,0,0,.07);
+}
+
+.titulo{
+ font-size:18px;
+ font-weight:bold;
+ margin-bottom:14px;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+}
+
+label{
+ display:block;
+ font-size:13px;
+ font-weight:bold;
+ margin-bottom:5px;
+}
+
+input,select{
+ width:100%;
+ padding:13px;
+ border:1px solid #d5ddd8;
+ border-radius:12px;
+ font-size:15px;
+}
+
+button{
+ cursor:pointer;
+}
+
+.btn-principal{
+ width:100%;
+ padding:14px;
+ border:0;
+ border-radius:12px;
+ background:#12864a;
+ color:white;
+ font-weight:bold;
+ margin-top:12px;
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px;
+}
+
+.stat{
+ background:#eef7f1;
+ padding:14px 8px;
+ border-radius:13px;
+ text-align:center;
+}
+
+.stat b{
+ display:block;
+ color:#12864a;
+ font-size:21px;
+ margin-bottom:4px;
+}
+
+.item{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:12px 0;
+ border-bottom:1px solid #edf0ee;
+}
+
+.item:last-child{
+ border-bottom:0;
+}
+
+.badge{
+ background:#e5f5eb;
+ color:#08783d;
+ padding:6px 10px;
+ border-radius:20px;
+ font-weight:bold;
+}
+
+.frequencia{
+ display:flex;
+ justify-content:space-between;
+ padding:10px 0;
+ border-bottom:1px solid #eee;
+}
+
+.secundario{
+ background:#e9f4ee;
+ color:#08783d;
+ width:100%;
+ padding:13px;
+ border:0;
+ border-radius:12px;
+ font-weight:bold;
+ margin-top:10px;
+}
+
+.aviso{
+ font-size:12px;
+ color:#68746d;
+ line-height:1.5;
+}
+
+@media(max-width:480px){
+ .grid{grid-template-columns:1fr}
+ .stats{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+</head>
+
+<body>
+
+<!-- TELA VERDE -->
+<section id="inicio" class="tela-inicial">
+
+ <div class="logo">AR</div>
+
+ <h1>Análise de Resultados</h1>
+
+ <p>
+ Organize seu histórico e acompanhe as estatísticas
+ dos resultados registrados.
+ </p>
+
+ <button class="btn btn-branco" onclick="abrirApp()">
+ ENTRAR NO APLICATIVO
+ </button>
+
+</section>
+
+
+<!-- APLICATIVO -->
+<section id="app" class="oculto">
+
+<header class="topo">
+ <h1>📊 Análise de Resultados</h1>
+ <p>Histórico • Estatísticas • Organização</p>
+</header>
+
+<main class="container">
+
+
+<!-- CADASTRO -->
+<div class="card">
+
+ <div class="titulo">➕ Adicionar resultado</div>
+
+ <div class="grid">
+
+  <div>
+   <label>Data</label>
+   <input type="date" id="data">
+  </div>
+
+  <div>
+   <label>Horário</label>
+   <input type="time" id="horario" value="11:00">
+  </div>
+
+ </div>
+
+ <div style="margin-top:10px">
+
+  <label>Resultado</label>
+
+  <input
+   id="resultado"
+   placeholder="Digite o resultado"
+   maxlength="30"
+  >
+
+ </div>
+
+ <button class="btn-principal" onclick="adicionar()">
+ ADICIONAR AO HISTÓRICO
+ </button>
+
+</div>
+
+
+<!-- RESUMO -->
+<div class="card">
+
+ <div class="titulo">📈 Resumo</div>
+
+ <div class="stats">
+
+  <div class="stat">
+   <b id="total">0</b>
+   Registros
+  </div>
+
+  <div class="stat">
+   <b id="dias">0</b>
+   Dias
+  </div>
+
+  <div class="stat">
+   <b id="valores">0</b>
+   Valores
+  </div>
+
+ </div>
+
+</div>
+
+
+<!-- FILTRO -->
+<div class="card">
+
+ <div class="titulo">🔎 Filtrar horário</div>
+
+ <select id="filtro" onchange="renderizar()">
+
+  <option value="todos">
+   Todos os horários
+  </option>
+
+  <option value="11:00">
+   11:00
+  </option>
+
+  <option value="14:00">
+   14:00
+  </option>
+
+  <option value="16:00">
+   16:00
+  </option>
+
+  <option value="18:00">
+   18:00
+  </option>
+
+  <option value="21:00">
+   21:00
+  </option>
+
+ </select>
+
+</div>
+
+
+<!-- ÚLTIMOS 30 DIAS -->
+<div class="card">
+
+ <div class="titulo">
+  📅 Últimos 30 dias
+ </div>
+
+ <div id="historico"></div>
+
+</div>
+
+
+<!-- FREQUÊNCIA -->
+<div class="card">
+
+ <div class="titulo">
+  📊 Frequência dos valores
+ </div>
+
+ <div id="frequencia"></div>
+
+ <p class="aviso">
+ A frequência apresentada é apenas descritiva e baseada
+ nos dados cadastrados. Ela não representa previsão ou
+ garantia de resultados futuros.
+ </p>
+
+</div>
+
+
+<!-- LIMPAR -->
+<div class="card">
+
+ <button class="secundario" onclick="limpar()">
+ 🗑️ Limpar histórico
+ </button>
+
+</div>
+
+</main>
+
+</section>
+
+
+<script>
+
+const CHAVE = "app_analise_resultados";
+
+let dados =
+ JSON.parse(localStorage.getItem(CHAVE) || "[]");
+
+
+function abrirApp(){
+
+ document.getElementById("inicio")
+ .classList.add("oculto");
+
+ document.getElementById("app")
+ .classList.remove("oculto");
+
+}
+
+
+function salvar(){
+
+ localStorage.setItem(
+  CHAVE,
+  JSON.stringify(dados)
+ );
+
+ renderizar();
+
+}
+
+
+function adicionar(){
+
+ const data =
+  document.getElementById("data").value;
+
+ const horario =
+  document.getElementById("horario").value;
+
+ const resultado =
+  document.getElementById("resultado")
+  .value.trim();
+
+ if(!data || !resultado){
+
+  alert("Informe a data e o resultado.");
+
+  return;
+
+ }
+
+
+ dados.unshift({
+
+  data:data,
+  horario:horario,
+  resultado:resultado
+
+ });
+
+
+ salvar();
+
+
+ document.getElementById("resultado")
+ .value="";
+
+}
+
+
+function ultimos30(){
+
+ const limite =
+  new Date();
+
+ limite.setDate(
+  limite.getDate()-30
+ );
+
+ return dados.filter(item => {
+
+  const d =
+   new Date(item.data+"T00:00:00");
+
+  return d >= limite;
+
+ });
+
+}
+
+
+function renderizar(){
+
+ const filtro =
+  document.getElementById("filtro")?.value
+  || "todos";
+
+
+ let lista =
+  ultimos30();
+
+ if(filtro !== "todos"){
+
+  lista =
+   lista.filter(
+    x => x.horario === filtro
+   );
+
+ }
+
+
+ document.getElementById("total")
+ .textContent = lista.length;
+
+
+ document.getElementById("dias")
+ .textContent =
+  new Set(lista.map(x=>x.data)).size;
+
+
+ document.getElementById("valores")
+ .textContent =
+  new Set(lista.map(x=>x.resultado)).size;
+
+
+ const historico =
+  document.getElementById("historico");
+
+
+ if(!lista.length){
+
+  historico.innerHTML =
+   "<p class='aviso'>Nenhum resultado registrado nos últimos 30 dias.</p>";
+
+ }else{
+
+  historico.innerHTML =
+   lista.slice(0,30).map(x => `
+
+    <div class="item">
+
+     <span>
+      ${formatarData(x.data)}
+      <br>
+      <small>${x.horario}</small>
+     </span>
+
+     <span class="badge">
+      ${escapar(x.resultado)}
+     </span>
+
+    </div>
+
+   `).join("");
+
+ }
+
+
+ mostrarFrequencia(lista);
+
+}
+
+
+function mostrarFrequencia(lista){
+
+ const contador = {};
+
+ lista.forEach(x=>{
+
+  contador[x.resultado] =
+   (contador[x.resultado] || 0)+1;
+
+ });
+
+
+ const ordenado =
+  Object.entries(contador)
+  .sort((a,b)=>b[1]-a[1])
+  .slice(0,15);
+
+
+ const area =
+  document.getElementById("frequencia");
+
+
+ if(!ordenado.length){
+
+  area.innerHTML =
+   "<p class='aviso'>Ainda não existem dados suficientes.</p>";
+
+  return;
+
+ }
+
+
+ area.innerHTML =
+  ordenado.map(([valor,qtd])=>`
+
+   <div class="frequencia">
+
+    <span>${escapar(valor)}</span>
+
+    <strong>${qtd} registro(s)</strong>
+
+   </div>
+
+  `).join("");
+
+}
+
+
+function formatarData(data){
+
+ const partes =
+  data.split("-");
+
+ return partes[2]+"/"+
+        partes[1]+"/"+
+        partes[0];
+
+}
+
+
+function escapar(texto){
+
+ return texto
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
+
+}
+
+
+function limpar(){
+
+ if(confirm("Deseja apagar todo o histórico?")){
+
+  dados=[];
+
+  salvar();
+
+ }
+
+}
+
+
+document.getElementById("data")
+.value =
+new Date()
+.toISOString()
+.slice(0,10);
+
+
+renderizar();
+
+</script>
+
+</body>
+</html>
